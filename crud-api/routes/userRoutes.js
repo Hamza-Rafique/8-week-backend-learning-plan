@@ -1,26 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const {
-  getAllUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser
+    getAllUsers,
+    getUserById,
+    createUser,
+    updateUser,
+    deleteUser
 } = require('../controllers/userController');
 
-// GET /api/users - Get all users
+const { validate, validateId } = require('../middleware/validation');
+const { userSchema, userIdSchema, userUpdateSchema } = require('../schemas/userSchema');
+
+// GET /api/users - Get all users with pagination
 router.get('/', getAllUsers);
 
 // GET /api/users/:id - Get user by ID
-router.get('/:id', getUserById);
+router.get('/:id', validateId(userIdSchema), getUserById);
 
 // POST /api/users - Create new user
-router.post('/', createUser);
+router.post('/', validate(userSchema), createUser);
 
 // PUT /api/users/:id - Update user
-router.put('/:id', updateUser);
+router.put('/:id', validateId(userIdSchema), validate(userUpdateSchema), updateUser);
 
 // DELETE /api/users/:id - Delete user
-router.delete('/:id', deleteUser);
+router.delete('/:id', validateId(userIdSchema), deleteUser);
 
 module.exports = router;
